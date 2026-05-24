@@ -33,8 +33,8 @@ export default function SearchForm() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full px-4 py-3 bg-white border-b border-gray-200 shadow-sm">
-      <div className="flex gap-2 flex-1">
+    <div className="w-full bg-white border-b border-gray-200 shadow-sm">
+      <div className="flex items-center gap-2 px-4 py-3 overflow-x-auto">
         <SearchBar
           placeholder="시도 (예: 서울특별시)"
           value={ctpvNm}
@@ -53,8 +53,6 @@ export default function SearchForm() {
           onChange={(e) => setUmdNm(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-      </div>
-      <div className="flex gap-2">
         <Button text={isPending ? "검색 중..." : "검색"} onClick={handleSearch} disabled={isPending} />
         <Button text="초기화" onClick={handleReset} variant="secondary" disabled={isPending} />
       </div>

@@ -1,19 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import SearchBar from "./SearchBar";
 import Button from "./Button";
 
 export default function SearchForm() {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [ctpvNm, setCtpvNm] = useState("");
   const [sggNm, setSggNm] = useState("");
   const [umdNm, setUmdNm] = useState("");
 
   const handleSearch = () => {
     const params = new URLSearchParams({ ctpvNm, sggNm, umdNm });
-    router.push(`/?${params}`);
+    startTransition(() => {
+      router.push(`/?${params}`);
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -24,31 +27,37 @@ export default function SearchForm() {
     setCtpvNm("");
     setSggNm("");
     setUmdNm("");
-    router.push("/");
+    startTransition(() => {
+      router.push("/");
+    });
   };
 
   return (
-    <div className="flex items-center gap-2 w-full px-6 py-3 bg-white border-b border-gray-200 shadow-sm">
-      <SearchBar
-        placeholder="시도 (예: 서울특별시)"
-        value={ctpvNm}
-        onChange={(e) => setCtpvNm(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
-      <SearchBar
-        placeholder="시군구 (예: 강남구)"
-        value={sggNm}
-        onChange={(e) => setSggNm(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
-      <SearchBar
-        placeholder="읍면동 (예: 역삼동)"
-        value={umdNm}
-        onChange={(e) => setUmdNm(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
-      <Button text="검색" onClick={handleSearch} />
-      <Button text="초기화" onClick={handleReset} variant="secondary" />
+    <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full px-4 py-3 bg-white border-b border-gray-200 shadow-sm">
+      <div className="flex gap-2 flex-1">
+        <SearchBar
+          placeholder="시도 (예: 서울특별시)"
+          value={ctpvNm}
+          onChange={(e) => setCtpvNm(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+        <SearchBar
+          placeholder="시군구 (예: 강남구)"
+          value={sggNm}
+          onChange={(e) => setSggNm(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+        <SearchBar
+          placeholder="읍면동 (예: 역삼동)"
+          value={umdNm}
+          onChange={(e) => setUmdNm(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+      </div>
+      <div className="flex gap-2">
+        <Button text={isPending ? "검색 중..." : "검색"} onClick={handleSearch} disabled={isPending} />
+        <Button text="초기화" onClick={handleReset} variant="secondary" disabled={isPending} />
+      </div>
     </div>
   );
 }
